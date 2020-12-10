@@ -137,8 +137,8 @@ $ su - <username>
 
 ```
 $ cat /etc/apt/sources.list
-deb http://ftp.us.debian.org/debian sid main
-deb-src http://ftp.us.debian.org/debian sid main
+deb http://deb.debian.org/debian sid main
+deb-src http://deb.debian.org/debian sid main
 $ sudo apt update
 ```
 
