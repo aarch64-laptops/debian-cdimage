@@ -1,0 +1,37 @@
+#include <kernel-image>
+
+# Multifunction devices
+drivers/mfd/**
+
+# Regulators
+drivers/regulator/**
+
+# NIC,sata, and USB on Armada 8K
+phy-mvebu-cp110-comphy ?
+
+# SoC modules
+drivers/soc/**
+
+# Watchdog needed for reboot
+sunxi_wdt ?
+
+# For Turris MOX (u-boot enables the watchdog)
+armada_37xx_wdt ?
+
+# SPI devices
+drivers/spi/**
+
+# For cros_ec mfd device
+cros_ec_spi ?
+
+# PCIe PHYs
+phy-rockchip-pcie ?
+
+# For spi-rockchip
+pl330 ?
+
+# Regulator-SoC synchronization
+rockchip-io-domain ?
+
+# Pin controllers
+drivers/pinctrl/**

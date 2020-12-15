@@ -1,0 +1,29 @@
+af_packet
+bitrev ?
+eeprom_93cx6 ?
+firmware_class
+led-class ?
+mbcache
+mfd-core ?
+nls_base
+# Default I/O charset for most filesystems that do character conversion
+nls_utf8
+thermal_sys ?
+
+# In case they become modular again
+lzo_compress
+lzo_decompress
+zlib_deflate
+zstd_decompress
+
+# Basic paravirtual modules
+hv_utils ?
+hv_vmbus ?
+virtio ?
+virtio_balloon ?
+virtio_mmio ?
+virtio_pci ?
+virtio_ring ?
+
+# The installer generally needs good entropy sources
+drivers/char/hw_random/**

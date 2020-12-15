@@ -1,0 +1,30 @@
+#!/usr/bin/make -f
+#include /usr/share/kernel-wedge/generic-rules
+
+export DH_COMPAT=10
+
+debian/control:
+	kernel-wedge gen-control > debian/control
+
+build: debian/control
+	dh_testdir
+
+clean: debian/control
+	dh_testdir
+	dh_clean `find modules -type l`
+
+binary-indep:
+
+binary-arch: debian/control
+	dh_testdir
+	dh_prep
+	
+	kernel-wedge install-files
+	kernel-wedge check
+
+	dh_fixperms -s
+	dh_gencontrol -s
+	dh_builddeb -s
+
+binary: build binary-indep binary-arch
+.PHONY: build clean binary-indep binary-arch binary debian/control

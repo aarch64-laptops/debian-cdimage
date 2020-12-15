@@ -1,0 +1,5 @@
+Source: linux-kernel-di-arm64
+Section: debian-installer
+Priority: optional
+Maintainer: Debian Install System Team <debian-boot@lists.debian.org>
+Build-Depends: kernel-wedge

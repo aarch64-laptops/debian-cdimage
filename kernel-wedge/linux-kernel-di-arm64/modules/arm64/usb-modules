@@ -1,0 +1,6 @@
+#include <usb-modules>
+dwc2
+dwc3
+usb3503
+phy-rockchip-typec
+extcon-usbc-cros-ec

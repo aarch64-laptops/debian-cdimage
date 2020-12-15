@@ -1,0 +1,2 @@
+# arch     version    flavour    installedname   suffix    build-depends
+arm64      5.10.0     custom     -               -         linux-image-5.10.0-custom
