@@ -1,0 +1,255 @@
+From fa08636d358bfa57d5fbeb74a534216ec74f9308 Mon Sep 17 00:00:00 2001
+From: Shawn Guo <shawn.guo@linaro.org>
+Date: Fri, 27 Nov 2020 09:33:32 +0000
+Subject: [PATCH] os-probes: probe microsoft OS on arm64
+
+It's a copy of microsoft OS probing scripts from os-probes/mounted/x86/.
+Tested on Lenovo Yoga C630 Laptop (arm64).
+
+Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
+---
+ os-probes/mounted/arm64/05efi           |  71 ++++++++++++++
+ os-probes/mounted/arm64/20microsoft     | 117 ++++++++++++++++++++++++
+ os-probes/mounted/arm64/efi/20microsoft |  28 ++++++
+ 3 files changed, 216 insertions(+)
+ create mode 100755 os-probes/mounted/arm64/05efi
+ create mode 100755 os-probes/mounted/arm64/20microsoft
+ create mode 100755 os-probes/mounted/arm64/efi/20microsoft
+
+diff --git a/os-probes/mounted/arm64/05efi b/os-probes/mounted/arm64/05efi
+new file mode 100755
+index 0000000..fcf3697
+--- /dev/null
++++ b/os-probes/mounted/arm64/05efi
+@@ -0,0 +1,71 @@
++#!/bin/sh
++# Detects all Microsoft OSes on a collection of partitions.
++
++. /usr/share/os-prober/common.sh
++
++partition="$1"
++mpoint="$2"
++type="$3"
++
++# This file is for UEFI platform only
++if [ ! -d /sys/firmware/efi ] || [ -f /var/lib/partman/ignore_uefi ]; then
++	debug "Not on UEFI platform"
++	exit 1
++fi
++
++# Weed out stuff that doesn't apply to us
++case "$type" in
++	vfat) debug "$1 is a FAT32 partition" ;;
++	msdos) debug "$1 is a FAT16 partition" ;;
++	fat) debug "$1 is a FAT partition (mounted by GRUB)" ;;
++	*) debug "$1 is $type partition: exiting"; exit 1 ;;
++esac
++
++if type udevadm > /dev/null 2>&1; then
++	udevinfo () {
++		udevadm info "$@"
++	}
++fi
++
++if type udevinfo > /dev/null 2>&1; then
++	# Skip virtual devices
++	if udevinfo -q path -n $partition | grep -q /virtual/; then
++		debug "$1 is virtual device: exiting"
++		exit 1
++	fi
++
++	eval "$(udevinfo -q property -n "$partition" | grep -E '^ID_PART_ENTRY_(TYPE|SCHEME)=')"
++	debug "$partition partition scheme is $ID_PART_ENTRY_SCHEME"
++	debug "$partition partition type is $ID_PART_ENTRY_TYPE"
++
++	if [ -z "$ID_PART_ENTRY_TYPE" -o -z "$ID_PART_ENTRY_SCHEME" -o \
++		\( "$ID_PART_ENTRY_SCHEME" != gpt -a "$ID_PART_ENTRY_SCHEME" != dos \) -o \
++		\( "$ID_PART_ENTRY_SCHEME" = gpt -a "$ID_PART_ENTRY_TYPE" != c12a7328-f81f-11d2-ba4b-00a0c93ec93b \) -o \
++		\( "$ID_PART_ENTRY_SCHEME" = dos -a "$ID_PART_ENTRY_TYPE" != 0xef \) ]; then
++		debug "$partition is not a ESP partition: exiting"
++		exit 1
++	fi
++else
++	debug "udevinfo and udevadm missing - cannot check partition type"
++fi
++
++efi=$(item_in_dir efi "$mpoint")
++if [ -z "$efi" ]; then
++	debug "$mpoint does not have /EFI directory: exiting"
++	exit 1
++fi
++
++ret=1
++for test in /usr/lib/os-probes/mounted/efi/*; do
++	debug "running subtest $test"
++	if [ -f "$test" ] && [ -x "$test" ]; then
++		entry=$("$test" "$mpoint/$efi")
++		if [ -n "$entry" ]; then
++			debug "bootloader $entry found by subtest $test"
++			ret=0
++			result "${partition}@/$efi/${entry}:efi"
++		fi
++	fi
++done
++
++exit $ret
+diff --git a/os-probes/mounted/arm64/20microsoft b/os-probes/mounted/arm64/20microsoft
+new file mode 100755
+index 0000000..06bb807
+--- /dev/null
++++ b/os-probes/mounted/arm64/20microsoft
+@@ -0,0 +1,117 @@
++#!/bin/sh
++# Detects all Microsoft OSes on a collection of partitions.
++
++. /usr/share/os-prober/common.sh
++
++partition="$1"
++mpoint="$2"
++type="$3"
++
++# This script looks for legacy BIOS bootloaders only. Skip if running UEFI
++if [ -d /sys/firmware/efi ] && [ ! -f /var/lib/partman/ignore_uefi ]; then
++	debug "Skipping legacy bootloaders on UEFI system"
++	exit 1
++fi
++
++# Weed out stuff that doesn't apply to us
++case "$type" in
++	ntfs|ntfs-3g) debug "$1 is a NTFS partition" ;;
++	vfat) debug "$1 is a FAT32 partition" ;;
++	msdos) debug "$1 is a FAT16 partition" ;;
++	fat) debug "$1 is a FAT partition (mounted by GRUB)" ;;
++	fuse|fuseblk) debug "$1 is a FUSE partition" ;; # might be ntfs-3g
++	*) debug "$1 is not a MS partition: exiting"; exit 1 ;;
++esac
++
++found=
++# Vista (previously Longhorn)
++if item_in_dir -q bootmgr "$2"; then
++	# there might be different boot directories in different case as:
++	# boot Boot BOOT
++	for boot in $(item_in_dir boot "$2"); do
++		bcd=$(item_in_dir bcd "$2/$boot")
++		if [ -n "$bcd" ]; then
++			if   grep -aqs "W.i.n.d.o.w.s. .1.0" "$2/$boot/$bcd"; then
++				long="Windows 10"
++			elif grep -aqs "W.i.n.d.o.w.s. .8" "$2/$boot/$bcd"; then
++				long="Windows 8"
++			elif grep -aqs "W.i.n.d.o.w.s. .7" "$2/$boot/$bcd"; then
++				long="Windows 7"
++			elif grep -aqs "W.i.n.d.o.w.s. .V.i.s.t.a" "$2/$boot/$bcd"; then
++				long="Windows Vista"
++			elif grep -aqs "W.i.n.d.o.w.s. .S.e.r.v.e.r. .2.0.0.8. .R.2." "$2/$boot/$bcd"; then
++				long="Windows Server 2008 R2"
++			elif grep -aqs "W.i.n.d.o.w.s. .S.e.r.v.e.r. .2.0.0.8." "$2/$boot/$bcd"; then
++				long="Windows Server 2008"
++			elif grep -aqs "W.i.n.d.o.w.s. .R.e.c.o.v.e.r.y. .E.n.v.i.r.o.n.m.e.n.t" "$2/$boot/$bcd"; then
++				long="Windows Recovery Environment"
++			elif grep -aqs "W.i.n.d.o.w.s. .S.e.t.u.p" "$2/$boot/$bcd"; then
++				long="Windows Recovery Environment"
++			else
++				long="Windows Vista"
++			fi
++			short=Windows
++
++			found=true
++
++			break
++		fi
++	done
++fi
++
++# 2000/XP/NT4.0
++if [ -z "$found" ] && item_in_dir -q ntldr "$2" && item_in_dir -q ntdetect.com "$2"; then
++	long="Windows NT/2000/XP"
++	short=Windows
++	ini=$(item_in_dir boot.ini "$2")
++	if [ -n "$ini" ]; then
++		multicount="$(grep -e "^multi" "$2/$ini" | wc -l)"
++		scsicount="$(grep -e "^scsi" "$2/$ini" | wc -l)"
++		msoscount="$(expr "${multicount}" + "${scsicount}")"
++		if [ "$msoscount" -eq 1 ]; then
++			# We need to remove a Carriage Return at the end of
++			# the line...
++			defaultmspart="$(grep -e "^default=" "$2/$ini" | cut -d '=' -f2 | tr -d '\r')"
++			# Escape any backslashes in defaultmspart
++			grepexp="^$(echo "$defaultmspart" | sed -e 's/\\/\\\\/')="
++			# Colons not allowed; replace by spaces
++			# Accented characters (non UTF-8) cause debconf to
++			# hang, so we fall back to the default if the name
++			# contains any weird characters.
++			long="$(grep -e "$grepexp" "$2/$ini" | cut -d '"' -f2 | \
++				tr ':' ' ' | LC_ALL=C grep -v '[^a-zA-Z0-9 &()/_-]')"
++			if [ -z "$long" ]; then
++				long="Windows NT/2000/XP"
++			fi
++		else
++			long="Windows NT/2000/XP"
++		fi
++
++		found=true
++	fi
++fi
++
++# MS-DOS
++if [ -z "$found" ] && item_in_dir -q dos "$2"; then
++	long="MS-DOS 5.x/6.x/Win3.1"
++	short=MS-DOS
++
++	found=true
++fi
++
++# 95/98/Me
++if [ -z "$found" ] && item_in_dir -q windows "$2" &&
++     item_in_dir -q win.com "$2"/"$(item_in_dir windows "$2")"; then
++	long="Windows 95/98/Me"
++	short=Windows9xMe
++
++	found=true
++fi
++
++if [ -z "$found" ]; then
++	exit 1
++fi
++
++label="$(count_next_label "$short")"
++result "${partition}:${long}:${label}:chain"
++exit 0
+diff --git a/os-probes/mounted/arm64/efi/20microsoft b/os-probes/mounted/arm64/efi/20microsoft
+new file mode 100755
+index 0000000..9532081
+--- /dev/null
++++ b/os-probes/mounted/arm64/efi/20microsoft
+@@ -0,0 +1,28 @@
++#!/bin/sh
++# Detects Microsoft bootloader on a EFI System Partition
++
++. /usr/share/os-prober/common.sh
++
++efi="$1"
++
++found=
++for microsoft in $(item_in_dir microsoft "$efi"); do
++	for boot in $(item_in_dir boot "$efi/$microsoft"); do
++		bcd=$(item_in_dir bcd "$efi/$microsoft/$boot")
++		bootmgfw=$(item_in_dir bootmgfw.efi "$efi/$microsoft/$boot")
++		if [ -n "$bcd" -a -n "$bootmgfw" ]; then
++			long="Windows Boot Manager"
++			short=Windows
++			path="$microsoft/$boot/$bootmgfw"
++			found=true
++			break
++		fi
++	done
++done
++
++
++if [ -n "$found" ]; then
++	label="$(count_next_label "$short")"
++	result "${path}:${long}:${label}"
++fi
++exit 0
+-- 
+2.29.2
+

@@ -1,0 +1,67 @@
+From 4126dc4e2cfeb20c13b516e3c639d08831233105 Mon Sep 17 00:00:00 2001
+From: Shawn Guo <shawn.guo@linaro.org>
+Date: Sun, 6 Dec 2020 08:02:57 +0000
+Subject: [PATCH 2/2] Update default.preseed for aarch64-laptops build
+
+ - Let user set up hostname.
+ - Comment out partitioning preseeds.
+ - Show message about install being complete.
+
+Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
+---
+ profiles/default.preseed | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/profiles/default.preseed b/profiles/default.preseed
+index c7fa7a2..7cfb36e 100644
+--- a/profiles/default.preseed
++++ b/profiles/default.preseed
+@@ -81,8 +81,8 @@ d-i netcfg/choose_interface select auto
+ # Note that any hostname and domain names assigned from dhcp take
+ # precidence over values set here. However, setting the values still
+ # prevents the questions from being shown even if values come from dhcp.
+-d-i netcfg/get_hostname string unassigned
+-d-i netcfg/get_domain string unassigned
++#d-i netcfg/get_hostname string unassigned
++#d-i netcfg/get_domain string unassigned
+ # to set the domain to empty:
+ #d-i netcfg/get_domain string 
+ 
+@@ -100,7 +100,7 @@ d-i netcfg/wireless_wep string
+ 
+ # In addition, you'll need to specify the method to use.
+ # The presently available methods are: "regular", "lvm" and "crypto"
+-d-i partman-auto/method string regular
++#d-i partman-auto/method string regular
+ 
+ # If one of the disks that are going to be automatically partitioned
+ # contains an old LVM configuration, the user will normally receive a
+@@ -115,14 +115,14 @@ d-i partman-auto/method string regular
+ #d-i partman-auto/init_automatically_partition       select  Guided - use entire disk
+ 
+ # You can choose from any of the predefined partitioning recipes:
+-d-i partman-auto/choose_recipe  select All files in one partition (recommended for new users)
++#d-i partman-auto/choose_recipe  select All files in one partition (recommended for new users)
+ #d-i  partman-auto/choose_recipe  select Desktop machine
+ #d-i  partman-auto/choose_recipe  select Multi-user workstation
+ 
+ # uncomment the following three values to makes partman automatically partition
+ # without confirmation.
+ #d-i partman/confirm_write_new_label boolean true
+-d-i partman/choose_partition  select Finish partitioning and write changes to disk
++#d-i partman/choose_partition  select Finish partitioning and write changes to disk
+ #d-i partman/confirm     boolean true
+ 
+ #### Boot loader installation.
+@@ -171,7 +171,7 @@ exim4-config  exim4/dc_postmaster   string
+ ### skip some annoying installation status notes
+ 
+ # Avoid that last message about the install being complete.
+-d-i finish-install/reboot_in_progress note
++#d-i finish-install/reboot_in_progress note
+ # Avoid the introductory message.
+ base-config base-config/intro note 
+ # Avoid the final message.
+-- 
+2.29.2
+

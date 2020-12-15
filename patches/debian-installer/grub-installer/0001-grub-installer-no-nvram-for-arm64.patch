@@ -1,0 +1,25 @@
+From 6f05f9aba27e6a96a89aa472eb8c5b5536901440 Mon Sep 17 00:00:00 2001
+From: Shawn Guo <shawn.guo@linaro.org>
+Date: Fri, 27 Nov 2020 09:50:35 +0000
+Subject: [PATCH] grub-installer: no-nvram for arm64
+
+---
+ grub-installer | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/grub-installer b/grub-installer
+index c168989c..c51af3b3 100755
+--- a/grub-installer
++++ b/grub-installer
+@@ -895,7 +895,7 @@ EOF
+ 		fi
+ 
+ 		case $ARCH in
+-		    powerpc/chrp_pegasos)
++		    powerpc/chrp_pegasos|arm64/efi)
+ 			# nvram is broken here
+ 			grub_install_params="$grub_install_params --no-nvram"
+ 			;;
+-- 
+2.29.2
+
