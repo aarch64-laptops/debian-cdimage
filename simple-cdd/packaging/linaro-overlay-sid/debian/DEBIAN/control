@@ -1,0 +1,9 @@
+Package: linaro-overlay-sid
+Version: 0.1-1
+Section: base
+Priority: optional
+Architecture: arm64
+Maintainer: Shawn Guo <shawn.guo@linaro.org>
+Description: Linaro Sid repository overlay configuration
+ This package provides sources.list.d and trusted.gpg.d file for
+ accessing Linaro Sid repository overlay.

@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# Patch kernel cmdline in grub.cfg
+GRUB_CFG=/boot/grub/grub.cfg
+chmod +w $GRUB_CFG
+sed -i 's/root=UUID=/efi=novamap pd_ignore_unused clk_ignore_unused root=UUID=/g' $GRUB_CFG
+
+# Install DTBs to ESP for DtbLoader.efi
+DTB_DEST=/boot/efi/dtb
+mkdir $DTB_DEST
+python3 /usr/local/bin/install-dtbs.py `readlink -f /usr/lib/linux-image-*-custom/` $DTB_DEST

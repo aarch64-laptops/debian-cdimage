@@ -1,0 +1,9 @@
+Package: dtbloader
+Version: 0.1-1
+Section: base
+Priority: optional
+Architecture: arm64
+Maintainer: Shawn Guo <shawn.guo@linaro.org>
+Description: DtbLoader for aarch64-laptops
+ This package provides an EFI DtbLoader for booting a devicetree based
+ kernel on ACPI based hardware, in particular Windows ARM based laptops.

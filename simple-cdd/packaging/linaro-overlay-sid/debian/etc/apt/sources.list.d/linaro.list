@@ -1,0 +1,3 @@
+deb http://obs.linaro.org/linaro-overlay-sid/sid/ ./
+deb-src http://obs.linaro.org/linaro-overlay-sid/sid/ ./
+

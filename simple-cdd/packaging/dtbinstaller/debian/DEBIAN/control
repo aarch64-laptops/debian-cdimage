@@ -1,0 +1,10 @@
+Package: dtbinstaller
+Version: 0.1-1
+Section: base
+Priority: optional
+Architecture: arm64
+Maintainer: Shawn Guo <shawn.guo@linaro.org>
+Description: DtbInstaller for aarch64-laptops
+ This package provides a python script for installing DTBs to ESP
+ partition where DtbLoader.efi will look for DTBs to boot
+ aarch64-laptops.
