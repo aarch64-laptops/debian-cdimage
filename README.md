@@ -27,7 +27,7 @@ we would like to give a few tips you might find them useful.
   could be freed up for Debian installation.  Go for `Manual` option at
   `Partition disks` step, set up partitions for Debian installation.
   After all changes are made, scroll down the screen to select
-  `Finish partitioning and write changs to disk`.
+  `Finish partitioning and write changes to disk`.
 
 * As there is no network connection during the installation, `Configure
   the package manager` step should be skipped by selecting `Go Back`
