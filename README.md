@@ -5,30 +5,18 @@ Laptops.  The CD image works on AArch64 laptops in the same way as what
 people usually see on X86 devices.  This guide takes Lenovo Yoga C630 as
 the target and only documents the quirks we need to deal with on AArch64
 laptops.  The assumption is that the laptop has a Windows 10 installed
-there.
+and Secure Boot disabled.
 
 ## Installer limitations
 
 After installation completes, you will get a fully functional kernel
 booting with device tree.  But installer kernel boots up with ACPI and
 only provides a minimal support required by installation, like display
-via efifb, HID devices, USB and UFS.  Here are a few non-working
-items you may want to know.
-
-* Currently only left side USB port works.  That means you have to boot
-  USB disk containing the CD image from left hand USB port.  We will
-  enable the other USB port soon.
+via efifb, HID devices, USB and UFS.
 
 * Wifi is not working for installer.  While USB dongle could be used to
   get network support in installer, this guide assumes there is no
   network connection with the installation.
-
-* There are two options to run installer that you can choose from Grub
-  menu: `Install` and `Graphic install`.  The first option provides
-  a text based installer interface, where only keyboard could be used.
-  The second gives a graphic interface, where you can use touch screen
-  and mouse in additional.  However, the mouse cursor movement via touch
-  pad is not working right now.  We will fix it.
 
 ## Installation tips
 
@@ -45,7 +33,7 @@ we would like to give a few tips you might find them useful.
   the package manager` step should be skipped by selecting `Go Back`
   instead of `Continue`.
 
-* The step 'Install the GRUB boot loader' takes a couple of minutes to
+* The step `Install the GRUB boot loader` takes a couple of minutes to
   complete.  Be patient.
 
 ## AArch64 quirks
@@ -54,12 +42,12 @@ If everything goes fine, you will get `Installation complete` prompt in
 the end.  However, it's not really completed yet for AArch64 devices, as
 we need to run UEFI Shell.efi for a couple of reasons.
 
-* Linux efibootmgr utility doesn't work on AArch64 devices.  Consequently
-  UEFI Boot variable cannot be modified to point to Grub, and device
-  still directly boots into Windows.  You can choose to use Windows command
-  prompt to change the variable.  But that doesn't work for Windows S mode
-  where command prompt is not available at all.  So we suggest to use
-  Shell.efi here.
+* Linux efibootmgr utility doesn't work on AArch64 devices, because efivars
+  doesn't work.  The reason behind it is that EFI variables are stored on
+  UFS, while firmware and OS cannot share the UFS device.  Consequently
+  EFI Boot variable cannot be modified to point to Grub, and device always
+  directly boots into Windows.  We need to use Shell.efi for EFI variable
+  update.
 
 * [DtbLoader](https://github.com/robclark/edk2/tree/dtbloader-chid) is
   used to load DTB using CHIDs.  DtbLoader.elf and DTBs named in CHIDs
@@ -107,6 +95,7 @@ FS5:\> bcfg boot modf 2 EFI\debian/grubaa64.efi
 ```
 FS5:\> bcfg driver add 1 DtbLoader.efi "dtb loader"
 ```
+
 6. Now installation really completes.  Remove the USB disk and reboot
    like below.
 
@@ -146,6 +135,5 @@ $ sudo apt update
 
 ```
 $ sudo apt install alsa-ucm-conf=1.2.3-1+linaro3
-$ pulseaudio -k
 $ pulseaudio --start
 ```
