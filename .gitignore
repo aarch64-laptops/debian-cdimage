@@ -1,0 +1,6 @@
+kernel-wedge/*.udeb
+kernel-wedge/linux-kernel-di-arm64/debian/*.postinst
+kernel-wedge/linux-kernel-di-arm64/debian/control
+kernel-wedge/linux-kernel-di-arm64_*-custom-1*.*
+
+simple-cdd/localpackages/*-custom-di_*-custom-1_arm64.udeb
