@@ -18,3 +18,8 @@ fastrpc
 dtbinstaller
 dtbloader
 linaro-overlay-sid
+
+firmware-yoga-c630
+ntfs-3g
+python2
+wget
