@@ -2,10 +2,13 @@
 
 The repository contains the Debian CD image releases for AArch64
 Laptops.  The CD image works on AArch64 laptops in the same way as what
-people usually see on X86 devices.  This guide takes Lenovo Yoga C630 as
-the target and only documents the quirks we need to deal with on AArch64
-laptops.  The assumption is that the laptop has a Windows 10 installed
-and Secure Boot disabled.
+people usually see on X86 devices.  This guide only highlights the quirks
+we need to deal with on AArch64 laptops.  The CD image is tested on Lenovo
+Yoga C630 laptop with the following conditions.
+
+* Secure Boot is disabled.
+* The laptop has Windows 10 installed.
+* BitLocker on Windows partition is turned off.
 
 ## Installer limitations
 
@@ -20,7 +23,8 @@ via efifb, HID devices, USB and UFS.
 
 ## Installation tips
 
-Although the installation is intuitive and Debian install guide could be found [here](https://www.debian.org/releases/stable/installmanual),
+Although the installation is intuitive and Debian install guide could be found
+[here](https://www.debian.org/releases/stable/installmanual),
 we would like to give a few tips you might find them useful.
 
 * The installer is able to resize Windows partition, so that disk space
@@ -103,15 +107,13 @@ FS5:\> bcfg driver add 1 DtbLoader.efi "dtb loader"
 FS5:\> reset
 ```
 
-## Debian first-run
+## Firmware installation
 
 At this point, you should be able to boot up Debian and login Gnome
-desktop.  Here are a few things that you want to set up to get the best
-experience.
+desktop.  However, some hardware blocks are not working properly yet
+because firmware is missing.  Follow steps below to install firmware.
 
-1. Go to Settings and set up Wi-Fi to get a network connection.
-
-2. Add user to sudo group.
+1. Add user to sudo group.
 
 ```
 $ su - root
@@ -120,7 +122,24 @@ $ exit
 $ su - <username>
 ```
 
-3. Update /etc/apt/sources.list with the best Debian mirror per your
+2. Run a cut-down version of [Celliwig](https://github.com/Celliwig/Lenovo-Yoga-c630)
+   yoga_fw_extract.sh to retrieve firmware files that we cannot find in
+   linux-firmware repository from Windows partition.
+
+```
+$ /lib/firmware/yoga_fw_extract.sh
+```
+
+3. Reboot the device.
+
+
+## Debian first-run
+
+Here are a few things that you want to set up to get the best experience.
+
+1. Go to Settings and set up Wi-Fi to get a network connection.
+
+2. Update /etc/apt/sources.list with the best Debian mirror per your
    location, drop sid-security repository which doesn't have a Release
    file.
 
@@ -131,9 +150,9 @@ deb-src http://deb.debian.org/debian sid main
 $ sudo apt update
 ```
 
-4. Install alsa-ucm-conf from Linaro OBS to enable audio.
+3. Install alsa-ucm-conf from Linaro OBS to enable audio.
 
 ```
 $ sudo apt install alsa-ucm-conf=1.2.3-1+linaro3
-$ pulseaudio --start
+$ pulseaudio -k
 ```
