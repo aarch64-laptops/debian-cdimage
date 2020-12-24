@@ -363,6 +363,7 @@ if [ ${COPY_ERR} -eq 0 ]; then
 	mkdir -p "${PATH_FW_C630}" &> /dev/null
 	done_failedexit $?
 	echo -n "Copying linux DSP files: "
+	rm "${DSP_TMP_PATH}"/wlanmdsp.mbn &> /dev/null
 	cp -a "${DSP_TMP_PATH}"/*.mbn "${PATH_FW_C630}" &> /dev/null
 	done_failedexit $?
 	echo -n "Copying linux GPU FW files: "
