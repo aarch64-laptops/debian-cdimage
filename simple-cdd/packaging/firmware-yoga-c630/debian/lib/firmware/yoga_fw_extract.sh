@@ -369,9 +369,9 @@ if [ ${COPY_ERR} -eq 0 ]; then
 	cp -a "${GPU_TMP_PATH}"/*.mbn "${PATH_FW_C630}" &> /dev/null
 	done_failedexit $?
 	cd "${PATH_FW_C630}"
-	echo -n "Creating symlink qcdsp2850.mbn -> modem.mdt: "
-	ln -s qcdsp2850.mbn modem.mdt &> /dev/null
-	done_failedexit $?
+#	echo -n "Creating symlink qcdsp2850.mbn -> modem.mdt: "
+#	ln -s qcdsp2850.mbn modem.mdt &> /dev/null
+#	done_failedexit $?
 	cd "${CWD}"
 
 ###################################################################################################################################################
