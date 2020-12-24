@@ -377,7 +377,7 @@ if [ ${COPY_ERR} -eq 0 ]; then
 ###################################################################################################################################################
 # Qualcomm Venus DSP files
 ###################################################################################################################################################
-#	echo -e "\n${TXT_UNDERLINE}Qualcomm Venus DSP firmware${TXT_NORMAL}"
+	echo -e "\n${TXT_UNDERLINE}Qualcomm Venus DSP firmware${TXT_NORMAL}"
 #	CMD_PILSPLITTER=`basename "${URL_TOOLS_PILSPLITTER}"`
 #	if [ -e "${CMD_PILSPLITTER}" ]; then
 #		echo "Deleting existing copy of Pil-Splitter tool: "
@@ -387,21 +387,22 @@ if [ ${COPY_ERR} -eq 0 ]; then
 #	echo -n "Fetching Pil-Splitter tool: "
 #	wget "${URL_TOOLS_PILSPLITTER}" &> /dev/null
 #	done_failedexit $?
-#	PATH_FW_VENUS="${CWD}/${PATH_FW_VENUS_SUFFIX}"
+	PATH_FW_VENUS="${CWD}/${PATH_FW_VENUS_SUFFIX}"
 #	if [ -e "${PATH_FW_VENUS}" ]; then
 #		echo "Deleting existing copy of linux Venus DSP files: "
 #		rm -rf "${PATH_FW_VENUS}" &> /dev/null
 #		done_failedexit $?
 #	fi
-#	echo -n "Creating directory for linux Venus DSP files: "
-#	mkdir -p "${PATH_FW_VENUS}" &> /dev/null
-#	done_failedexit $?
-#	echo -n "Copying Venus firmware from tmp path: "
-#	cp -a "${VENUS_TMP_PATH}/qcvss850.mbn" "${PATH_FW_VENUS}" &> /dev/null
-#	done_failedexit $?
-#	echo -n "Extracting Venus firmware files: "
+	echo -n "Creating directory for linux Venus DSP files: "
+	mkdir -p "${PATH_FW_VENUS}" &> /dev/null
+	done_failedexit $?
+	echo -n "Copying Venus firmware from tmp path: "
+	cp -a "${VENUS_TMP_PATH}/qcvss850.mbn" "${PATH_FW_VENUS}" &> /dev/null
+	done_failedexit $?
+	echo -n "Extracting Venus firmware files: "
 #	python2 "${CMD_PILSPLITTER}" "${PATH_FW_VENUS}/qcvss850.mbn" "${PATH_FW_VENUS}/venus" &> /dev/null
-#	done_failedexit $?
+	python2 "/lib/firmware/pil-splitter.py" "${PATH_FW_VENUS}/qcvss850.mbn" "${PATH_FW_VENUS}/venus" &> /dev/null
+	done_failedexit $?
 
 ###################################################################################################################################################
 # Check files
@@ -456,17 +457,17 @@ if [ ${COPY_ERR} -eq 0 ]; then
 	done_failedexit $?
 
 	# Copy Venus DSP firmware files
-#	if [ -e "${PATH_LIBFW_QCOM}/${PATH_FW_VENUS_SUFFIX}" ]; then
-#		backup_or_delete "Qualcomm Venus DSP" "${PATH_LIBFW_QCOM}/${PATH_FW_VENUS_SUFFIX}" "${BKUP_DATETIME}"
-#	fi
-#	echo -n "Copying new Qualcomm Venus DSP firmware: "
-#	if [[ `dirname ${PATH_FW_VENUS_SUFFIX}` == "." ]]; then			# If multi level directory structure
-#		PATH_FW_COPY=${PATH_FW_VENUS_SUFFIX}
-#	else
-#		PATH_FW_COPY=`dirname ${PATH_FW_VENUS_SUFFIX}`			# Strip second level
-#	fi
-#	sudo cp -r "${PATH_FW_COPY}" "${PATH_LIBFW_QCOM}" &> /dev/null
-#	done_failedexit $?
+	if [ -e "${PATH_LIBFW_QCOM}/${PATH_FW_VENUS_SUFFIX}" ]; then
+		backup_or_delete "Qualcomm Venus DSP" "${PATH_LIBFW_QCOM}/${PATH_FW_VENUS_SUFFIX}" "${BKUP_DATETIME}"
+	fi
+	echo -n "Copying new Qualcomm Venus DSP firmware: "
+	if [[ `dirname ${PATH_FW_VENUS_SUFFIX}` == "." ]]; then			# If multi level directory structure
+		PATH_FW_COPY=${PATH_FW_VENUS_SUFFIX}
+	else
+		PATH_FW_COPY=`dirname ${PATH_FW_VENUS_SUFFIX}`			# Strip second level
+	fi
+	sudo cp -r "${PATH_FW_COPY}" "${PATH_LIBFW_QCOM}" &> /dev/null
+	done_failedexit $?
 
 	# Reset firmware owner/group permissions
 	sudo chown -R root:root "${PATH_LIBFW_QCOM}"
