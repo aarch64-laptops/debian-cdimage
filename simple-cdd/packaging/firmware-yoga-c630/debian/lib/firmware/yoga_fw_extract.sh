@@ -406,21 +406,21 @@ if [ ${COPY_ERR} -eq 0 ]; then
 ###################################################################################################################################################
 # Check files
 ###################################################################################################################################################
-	echo -e "\n${TXT_UNDERLINE}Checking firmware...${TXT_NORMAL}"
-	echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-	echo "!!!This checks your generated firmware directories against known MD5 hashes!!!"
-	echo "!!!If it passes great!                                                     !!!"
-	echo "!!!If it fails, well, there could be regional differences... I don't know  !!!"
-	echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-
+#	echo -e "\n${TXT_UNDERLINE}Checking firmware...${TXT_NORMAL}"
+#	echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+#	echo "!!!This checks your generated firmware directories against known MD5 hashes!!!"
+#	echo "!!!If it passes great!                                                     !!!"
+#	echo "!!!If it fails, well, there could be regional differences... I don't know  !!!"
+#	echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+#
 #	check_file_md5 "${PATH_FW_ATH10K_HW}"/board-2.bin
 #	check_file_md5 "${PATH_FW_ATH10K_HW}"/firmware-5.bin
-
-	check_file_md5 "${PATH_FW_C630}"/qcadsp850.mbn
-	check_file_md5 "${PATH_FW_C630}"/qccdsp850.mbn
-	check_file_md5 "${PATH_FW_C630}"/qcdsp1v2850.mbn
-	check_file_md5 "${PATH_FW_C630}"/qcdsp2850.mbn
-	check_file_md5 "${PATH_FW_C630}"/modem.mdt
+#
+#	check_file_md5 "${PATH_FW_C630}"/qcadsp850.mbn
+#	check_file_md5 "${PATH_FW_C630}"/qccdsp850.mbn
+#	check_file_md5 "${PATH_FW_C630}"/qcdsp1v2850.mbn
+#	check_file_md5 "${PATH_FW_C630}"/qcdsp2850.mbn
+#	check_file_md5 "${PATH_FW_C630}"/modem.mdt
 #	check_file_md5 "${PATH_FW_C630}"/wlanmdsp.mbn
 
 ###################################################################################################################################################
