@@ -156,3 +156,13 @@ $ sudo apt update
 $ sudo apt install alsa-ucm-conf=1.2.3-1+linaro3
 $ pulseaudio -k
 ```
+
+## Misc tips
+
+* The default GNOME login is backed by Wayland. If you want to use login backed by Xorg like `System X11 Default`, `GNOME Classic` or `GNOME on Xorg`, package `xinit` needs to be installed.
+
+```
+$ sudo apt install xinit
+```
+
+* By default, only left button on touchpad works.  Goto `Settings -> Mouse & Touchpad -> Touchpad` and turn on option `Tap to Click`, so that you will get one-finger tap as left click and two-fingers tap as right click.
