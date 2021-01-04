@@ -5,7 +5,7 @@ crda
 sudo
 vim
 
-linux-image-5.10.0-rc5-next-20201127-custom
+linux-image-5.11.0-rc2-custom
 grub-efi-arm64
 os-prober
 
