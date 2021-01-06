@@ -1,6 +1,6 @@
 # Debian CD Image for AArch64 Laptops
 
-The repository contains the Debian CD image releases for AArch64
+The repository contains the Debian CD image [releases](https://github.com/aarch64-laptops/debian-cdimage/releases) for AArch64
 Laptops.  The CD image works on AArch64 laptops in the same way as what
 people usually see on X86 devices.  This guide only highlights the quirks
 we need to deal with on AArch64 laptops.  The CD image is tested on Lenovo
