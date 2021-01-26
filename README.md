@@ -6,9 +6,9 @@ people usually see on X86 devices.  This guide only highlights the quirks
 we need to deal with on AArch64 laptops.  The CD image is tested on Lenovo
 Yoga C630 laptop with the following conditions.
 
-* Secure Boot is disabled.
+* [Secure Boot](https://github.com/aarch64-laptops/build#disabling-secure-boot-on-the-lenovo-c630) is disabled.
 * The laptop has Windows 10 installed.
-* BitLocker on Windows partition is turned off.
+* [BitLocker](https://www.m3datarecovery.com/bitlocker-windows-home/turn-off-bitlocker-windows10.html) on Windows partition is turned off.
 
 ## Installer limitations
 
@@ -82,7 +82,7 @@ FS5:\> ls EFI\debian
 ```
 
 4. Modify variable `Boot0001` to get it point to grubaa64.efi.  The number
-   `2` in the second command is identified by looking at `Option` filed in
+   `2` in the second command is identified by looking at `Option` field in
    the first command output.
 
 ```
@@ -122,9 +122,10 @@ $ exit
 $ su - <username>
 ```
 
-2. Run a cut-down version of [Celliwig](https://github.com/Celliwig/Lenovo-Yoga-c630)
-   yoga_fw_extract.sh to retrieve firmware files that we cannot find in
-   linux-firmware repository from Windows partition.
+2. Run yoga_fw_extract.sh to retrieve firmware files that we cannot find
+in linux-firmware repository from Windows partition. This is a cut-down
+version of a script from the [Celliwig](https://github.com/Celliwig/Lenovo-Yoga-c630)
+project.
 
 ```
 $ /lib/firmware/yoga_fw_extract.sh
