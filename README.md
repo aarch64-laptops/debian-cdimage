@@ -91,7 +91,7 @@ FS5:\> bcfg boot dump
 Option 02. Variable: Boot0001
   Desc   - Windows Boot Manager
 ...
-FS5:\> bcfg boot modf 2 EFI\debian/grubaa64.efi
+FS5:\> bcfg boot modf 2 EFI\debian\grubaa64.efi
 ```
 
 5. Tell UEFI to launch DtbLoader.efi for every boot.
