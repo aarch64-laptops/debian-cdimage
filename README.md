@@ -154,7 +154,7 @@ $ sudo apt update
 3. Install alsa-ucm-conf from Linaro OBS to enable audio.
 
 ```
-$ sudo apt install alsa-ucm-conf=1.2.3-1+linaro3
+$ sudo apt install alsa-ucm-conf
 $ pulseaudio -k
 ```
 
