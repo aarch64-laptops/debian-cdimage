@@ -12,4 +12,4 @@ sed -i 's/root=UUID=/efi=novamap pd_ignore_unused clk_ignore_unused root=UUID=/g
 # Install DTBs to ESP for DtbLoader.efi
 DTB_DEST=/boot/efi/dtb
 mkdir $DTB_DEST
-python3 /usr/local/bin/install-dtbs.py `readlink -f /usr/lib/linux-image-*-custom/` $DTB_DEST
+python3 /usr/local/bin/install-dtbs.py /usr/lib/linux-image-`uname -r` $DTB_DEST
