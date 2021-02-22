@@ -1,1 +1,1 @@
-d-i base-installer/kernel/image string linux-image-5.11.0-rc2-custom
+d-i base-installer/kernel/image string linux-image-5.11.0-custom
