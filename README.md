@@ -2,9 +2,9 @@
 
 The repository contains the Debian CD image [releases](https://github.com/aarch64-laptops/debian-cdimage/releases) for AArch64
 Laptops.  The CD image works on AArch64 laptops in the same way as what
-people usually see on X86 devices.  This guide only highlights the quirks
+people usually see on x86 devices.  This guide only highlights the quirks
 we need to deal with on AArch64 laptops.  The CD image is tested on Lenovo
-Yoga C630 laptop with the following conditions.
+Yoga C630 and Flex 5G laptops with the following conditions.
 
 * [Secure Boot](https://github.com/aarch64-laptops/build#disabling-secure-boot-on-the-lenovo-c630) is disabled.
 * The laptop has Windows 10 installed.
@@ -37,7 +37,7 @@ we would like to give a few tips you might find them useful.
   the package manager` step should be skipped by selecting `Go Back`
   instead of `Continue`.
 
-* The step `Install the GRUB boot loader` takes a couple of minutes to
+* The step `Install the GRUB boot loader` takes quite a while to
   complete.  Be patient.
 
 ## AArch64 quirks
@@ -73,7 +73,8 @@ grub> boot
 ```
 
 3. Identify the FS number of ESP partition on UFS by checking there
-   is a grubaa64.efi in `EFI\debian` folder.
+   is a grubaa64.efi in `EFI\debian` folder.  For example, it's `fs5:`
+   on Lenovo Yoga C630 and `fs4:` on Flex 5G.
 
 ```
 Shell> map -r -b
@@ -94,11 +95,24 @@ Option 02. Variable: Boot0001
 FS5:\> bcfg boot modf 2 EFI\debian\grubaa64.efi
 ```
 
+**Note:** In case there is no Boot option, for example on the fresh Flex 5G system,
+use the following command to add an option for grubaa64.efi.
+
+```
+FS4:\> bcfg boot dump
+No options found.
+FS4:\> bcfg boot add 0 EFI\debian\grubaa64.efi "GRUB"
+```
+
 5. Tell UEFI to launch DtbLoader.efi for every boot.
 
 ```
 FS5:\> bcfg driver add 1 DtbLoader.efi "dtb loader"
 ```
+
+**Note:** This step is not needed for Flex 5G, because the firmware on the
+laptop doesn't support driver loading.  And we use GRUB `devicetree`
+command to load DTB on Flex 5G.
 
 6. Now installation really completes.  Remove the USB disk and reboot
    like below.
@@ -109,8 +123,8 @@ FS5:\> reset
 
 ## Firmware installation
 
-At this point, you should be able to boot up Debian and login Gnome
-desktop.  However, some hardware blocks are not working properly yet
+At this point, you should be able to boot up and login Debian system.
+However, some hardware blocks are not working properly yet
 because firmware is missing.  Follow steps below to install firmware.
 
 1. Add user to sudo group.
@@ -122,13 +136,19 @@ $ exit
 $ su - <username>
 ```
 
-2. Run yoga_fw_extract.sh to retrieve firmware files that we cannot find
-in linux-firmware repository from Windows partition. This is a cut-down
-version of a script from the [Celliwig](https://github.com/Celliwig/Lenovo-Yoga-c630)
-project.
+2. Run firmware extract script to retrieve firmware files that we cannot find
+   in linux-firmware repository from Windows partition. This is a cut-down
+   version of a script from the [Celliwig](https://github.com/Celliwig/Lenovo-Yoga-c630)
+   project.
 
+* Lenovo Yoga C630
 ```
 $ /lib/firmware/yoga_fw_extract.sh
+```
+
+* Lenovo Flex 5G
+```
+$ /lib/firmware/flex5g_fw_extract.sh
 ```
 
 3. Reboot the device.
@@ -137,6 +157,8 @@ $ /lib/firmware/yoga_fw_extract.sh
 ## Debian first-run
 
 Here are a few things that you want to set up to get the best experience.
+
+### Lenovo Yoga C630
 
 1. Go to Settings and set up Wi-Fi to get a network connection.
 
@@ -158,12 +180,30 @@ $ sudo apt install alsa-ucm-conf
 $ pulseaudio -k
 ```
 
+### Lenovo Flex 5G
+
+The support of Lenovo Flex 5G is half-baked at this point. The graphic
+support is not available yet. Follow the example below to setup WiFi
+with command-line.
+
+```
+nmcli con add con-name WiFi ifname wlan0 type wifi ssid <Your_Network_SSID>
+nmcli con modify WiFi wifi-sec.key-mgmt wpa-psk
+nmcli con modify WiFi wifi-sec.psk <Your_WiFi_Password>
+nmcli con up WiFi
+```
+
 ## Misc tips
 
-* The default GNOME login is backed by Wayland. If you want to use login backed by Xorg like `System X11 Default`, `GNOME Classic` or `GNOME on Xorg`, package `xinit` needs to be installed.
+* The default GNOME login is backed by Wayland. If you want to use login
+  backed by Xorg like `System X11 Default`, `GNOME Classic` or
+  `GNOME on Xorg`, package `xinit` needs to be installed.
 
 ```
 $ sudo apt install xinit
 ```
 
-* By default, only left button on touchpad works.  Goto `Settings -> Mouse & Touchpad -> Touchpad` and turn on option `Tap to Click`, so that you will get one-finger tap as left click and two-fingers tap as right click.
+* By default, only left button on touchpad works.  Goto
+  `Settings -> Mouse & Touchpad -> Touchpad` and turn on option
+  `Tap to Click`, so that you will get one-finger tap as left click and
+  two-fingers tap as right click.
