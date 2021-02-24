@@ -13,3 +13,11 @@ sed -i 's/root=UUID=/efi=novamap pd_ignore_unused clk_ignore_unused root=UUID=/g
 DTB_DEST=/boot/efi/dtb
 mkdir $DTB_DEST
 python3 /usr/local/bin/install-dtbs.py /usr/lib/linux-image-`uname -r` $DTB_DEST
+
+# Lenovo Flex 5G quirks
+if dmidecode | grep -q "Lenovo Flex 5G"; then
+# UEFI doesn't load DtbLoader driver. Load DTB via grub devicetree command.
+sed -i "/initrd.img-`uname -r`$/a\ \tdevicetree /usr/lib/linux-image-`uname -r`/qcom/sc8180x-lenovo-flex-5g.dtb" /boot/grub/grub.cfg
+# Graphic doesn't work yet. Force runlevel 3.
+sed -i 's/quiet/quiet 3/g' $GRUB_CFG
+fi
