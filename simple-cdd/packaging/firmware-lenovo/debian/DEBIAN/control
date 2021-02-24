@@ -1,0 +1,9 @@
+Package: firmware-lenovo
+Version: 0.1-1
+Section: base
+Priority: optional
+Architecture: arm64
+Maintainer: Shawn Guo <shawn.guo@linaro.org>
+Description: Linux firmware for Lenovo Snapdragon laptops
+ This package provides Linux firmware for Lenovo laptops built on
+ Qualcomm Snapdragon chips.
