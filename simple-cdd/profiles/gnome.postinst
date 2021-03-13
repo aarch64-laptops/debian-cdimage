@@ -2,12 +2,12 @@
 
 # Patch grub config in /etc/
 GRUB_ETC=/etc/default/grub
-sed -i 's/GRUB_CMDLINE_LINUX=\"\"/GRUB_CMDLINE_LINUX=\"efi=novamap pd_ignore_unused clk_ignore_unused\"/' $GRUB_ETC
+sed -i 's/GRUB_CMDLINE_LINUX=\"\"/GRUB_CMDLINE_LINUX=\"pd_ignore_unused clk_ignore_unused\"/' $GRUB_ETC
 
 # Patch kernel cmdline in grub.cfg
 GRUB_CFG=/boot/grub/grub.cfg
 chmod +w $GRUB_CFG
-sed -i 's/root=UUID=/efi=novamap pd_ignore_unused clk_ignore_unused root=UUID=/g' $GRUB_CFG
+sed -i 's/root=UUID=/pd_ignore_unused clk_ignore_unused root=UUID=/g' $GRUB_CFG
 
 # Install DTBs to ESP for DtbLoader.efi
 DTB_DEST=/boot/efi/dtb
