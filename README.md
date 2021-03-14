@@ -54,15 +54,16 @@ we need to run UEFI Shell.efi for a couple of reasons.
 * Linux efibootmgr utility doesn't work on AArch64 devices, because efivars
   doesn't work.  The reason behind it is that EFI variables are stored on
   UFS, while firmware and OS cannot share the UFS device.  Consequently
-  EFI Boot variable cannot be modified to point to Grub, and device always
+  EFI Boot variable cannot be modified to chain boot Linux, and device always
   directly boots into Windows.  We need to use Shell.efi for EFI variable
   update.
 
-* [DtbLoader](https://github.com/robclark/edk2/tree/dtbloader-chid) is
+* [DtbLoader](https://github.com/aarch64-laptops/edk2/tree/dtbloader-app) is
   used to load DTB using CHIDs.  DtbLoader.elf and DTBs named in CHIDs
-  have been installed to ESP partition as part of the Debian
-  installation.  But we need to additionally insert a command to UEFI,
-  so that DtbLoader.efi will be run by UEFI for every power-on.
+  have been installed to ESP partition as part of the Debian installation.
+  When booting from UFS disk, DtbLoader will be the first one launched
+  by UEFI.  After loading DTB for the target laptop, DtbLoader will in turn
+  chain load grubaa64.efi in the same folder.
 
 Follow the steps below to launch Shell.efi for completing installation.
 
@@ -78,8 +79,8 @@ grub> boot
 ```
 
 3. Identify the FS number of ESP partition on UFS by checking there
-   is a grubaa64.efi in `EFI\debian` folder.  For example, it's `fs5:`
-   on Lenovo Yoga C630 and `fs4:` on Flex 5G.
+   are DtbLoader.efi and grubaa64.efi in `EFI\debian` folder.  For example,
+   it's `fs5:` on Lenovo Yoga C630 and `fs4:` on Flex 5G.
 
 ```
 Shell> map -r -b
@@ -87,7 +88,7 @@ Shell> fs5:
 FS5:\> ls EFI\debian
 ```
 
-4. Modify variable `Boot0001` to get it point to grubaa64.efi.  The number
+4. Modify EFI variable Boot#### to get it point to DtbLoader.efi.  The number
    `2` in the second command is identified by looking at `Option` field in
    the first command output.
 
@@ -97,29 +98,19 @@ FS5:\> bcfg boot dump
 Option 02. Variable: Boot0001
   Desc   - Windows Boot Manager
 ...
-FS5:\> bcfg boot modf 2 EFI\debian\grubaa64.efi
+FS5:\> bcfg boot modf 2 EFI\debian\DtbLoader.efi
 ```
 
 **Note:** In case there is no Boot option, for example on the fresh Flex 5G system,
-use the following command to add an option for grubaa64.efi.
+use the following command to add an option for DtbLoader.efi.
 
 ```
 FS4:\> bcfg boot dump
 No options found.
-FS4:\> bcfg boot add 0 EFI\debian\grubaa64.efi "GRUB"
+FS4:\> bcfg boot add 0 EFI\debian\DtbLoader.efi "DtbLoader"
 ```
 
-5. Tell UEFI to launch DtbLoader.efi for every boot.
-
-```
-FS5:\> bcfg driver add 1 DtbLoader.efi "dtb loader"
-```
-
-**Note:** This step is not needed for Flex 5G, because the firmware on the
-laptop doesn't support driver loading.  And we use GRUB `devicetree`
-command to load DTB on Flex 5G.
-
-6. Now installation really completes.  Remove the USB disk and reboot
+5. Now installation really completes.  Remove the USB disk and reboot
    like below.
 
 ```
