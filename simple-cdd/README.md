@@ -1,10 +1,5 @@
 # Notes about simple-cdd build
 
-## Important fix
-
-The simple-cdd release for Sid misses the fix for [Bug 949255]
-(https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=949255).
-
 ## Local binary packaging
 ```
 $ cd simple-cdd/packaging/firmware-yoga-c630/
