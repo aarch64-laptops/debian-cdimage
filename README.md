@@ -21,6 +21,11 @@ via efifb, HID devices, USB and UFS.
   get network support in installer, this guide assumes there is no
   network connection with the installation.
 
+* Touchscreen is not working for installer.  ACPI kernel has no way to
+  turn on clock for touchscreen on Flex 5G, and enabling touchscreen
+  results in a system hang.  Rather than having another dirty hack, we
+  choose to disable the touchscreen support for installer.
+
 ## Installation tips
 
 Although the installation is intuitive and Debian install guide could be found
