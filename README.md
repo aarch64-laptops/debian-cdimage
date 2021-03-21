@@ -17,6 +17,8 @@ booting with device tree.  But installer kernel boots up with ACPI and
 only provides a minimal support required by installation, like display
 via efifb, HID devices, USB and UFS.
 
+* For Flex 5G, the installer USB disk doesn't work on charging port.
+  So please use the other Type-C port for installing.
 * Wifi is not working for installer.  While USB dongle could be used to
   get network support in installer, this guide assumes there is no
   network connection with the installation.
