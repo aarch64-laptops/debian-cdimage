@@ -191,6 +191,43 @@ nmcli con modify WiFi wifi-sec.psk <Your_WiFi_Password>
 nmcli con up WiFi
 ```
 
+## Kernel upgrade
+
+Kernel for the laptops can be natively rebuilt and upgraded with the following
+steps (kernel 5.13 as example).
+
+1. Install dependencies
+```
+$ sudo apt install bc bison flex libssl-dev rsync
+```
+
+2. Check out kernel source
+```
+$ git clone https://github.com/aarch64-laptops/linux.git
+$ cd linux
+$ git checkout -b laptops-5.13
+```
+
+3. Build binary kernel deb package
+```
+$ make distro_defconfig
+$ make LOCALVERSION="-custom" -j8 bindeb-pkg
+```
+After build completes, the following deb files will be found in parent folder.
+- linux-image-5.13.0-custom_5.13.0-custom-1_arm64.deb
+- linux-headers-5.13.0-custom_5.13.0-custom-1_arm64.deb
+- linux-libc-dev_5.13.0-custom-1_arm64.deb
+
+4. Install kernel package
+```
+$ sudo dpkg -i linux-image-5.13.0-custom_5.13.0-custom-1_arm64.deb
+```
+
+5. Upgrade DTB
+```
+$ sudo python3 /usr/local/bin/install-dtbs.py /usr/lib/linux-image-5.13.0-custom /boot/efi/dtb
+```
+
 ## Misc tips
 
 * The default GNOME login is backed by Wayland. If you want to use login
