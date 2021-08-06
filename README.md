@@ -242,3 +242,30 @@ $ sudo apt install xinit
   `Settings -> Mouse & Touchpad -> Touchpad` and turn on option
   `Tap to Click`, so that you will get one-finger tap as left click and
   two-fingers tap as right click.
+
+* After installation, you can speed up updating grub by adding an entry for
+  Windows 10 instead of letting its os prober run.
+
+  Edit `/etc/default/grub` and add the following line:
+  ```
+  GRUB_DISABLE_OS_PROBER=true
+  ```
+  Figure out the UUID of the partition containing Windows bootloader  (/dev/sda1)
+  ```
+  sudo blkid /dev/sda1
+  ```
+  We want the UUID - e.g. UUID="5C16-07AB"
+
+  Now edit the `/etc/grub.d/40_custom` file and add (replacing the UUID with
+  your own!)
+  ```
+  menuentry "Windows 10" --class windows --class os {
+     insmod ntfs
+     search --no-floppy --set=root --fs-uuid 5C16-07AB
+     chainloader (${root})/EFI/Microsoft/Boot/bootmgfw.efi
+  }
+  ```
+  Then run
+  ```
+  update-grub
+  ```
