@@ -205,7 +205,7 @@ $ sudo apt install bc bison flex libssl-dev rsync
 ```
 $ git clone https://github.com/aarch64-laptops/linux.git
 $ cd linux
-$ git checkout -b laptops-5.13
+$ git checkout -b laptops-5.13 origin/laptops-5.13
 ```
 
 3. Build binary kernel deb package
